@@ -27,7 +27,7 @@ function selectSym(sym){
   }
   document.querySelector('.selectSym').style.display = "none";
 }
-// Startgame, inisialisasi board, ngeemptiin board
+
 function startGame() {
   document.querySelector('.endgame').style.display = "none";
   document.querySelector('.endgame .text').innerText ="";
@@ -55,10 +55,6 @@ function turn(squareId, player) {
 }
 
 function checkWin(board, player) {
-  /**
-   * An array containing the indices of the board where the player has made a move.
-   * @type {number[]}
-   */
   let plays = board.reduce((a, e, i) => (e === player) ? a.concat(i) : a, []);
   let gameWon = null;
   for (let [index, win] of winCombos.entries()) {
@@ -85,10 +81,6 @@ function declareWinner(who) {
   document.querySelector(".endgame").style.display = "block";
   document.querySelector(".endgame .text").innerText = who;
 }
-/**
- * Returns an array of empty squares from the original board.
- * @returns {Array} An array of empty squares.
- */
 function emptySquares() {
   return origBoard.filter((elm, i) => i===elm);
 }
