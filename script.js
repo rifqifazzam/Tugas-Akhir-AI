@@ -1,7 +1,7 @@
-let origBoard;
-let huPlayer ='O';
-let aiPlayer = 'X';
-const winCombos =[
+let papanPermainan;
+let pManusia ='O';
+let pBot = 'X';
+const comboMenang =[
   [0, 1, 2],
   [3, 4, 5],
   [6, 7, 8],
@@ -15,23 +15,23 @@ const winCombos =[
 const cells = document.querySelectorAll('.cell');
 startGame();
 
-function selectSym(sym){
-  huPlayer = sym;
-  aiPlayer = sym==='O' ? 'X' :'O';
-  origBoard = Array.from(Array(9).keys());
+function selectSimbol(simbol){
+  pManusia = simbol;
+  pBot = simbol==='O' ? 'X' :'O';
+  papanPermainan = Array.from(Array(9).keys());
   for (let i = 0; i < cells.length; i++) {
     cells[i].addEventListener('click', turnClick, false);
   }
-  if (aiPlayer === 'X') {
-    turn(bestSpot(),aiPlayer);
+  if (pBot === 'X') {
+    turn(bestSpot(),pBot);
   }
-  document.querySelector('.selectSym').style.display = "none";
+  document.querySelector('.selectSimbol').style.display = "none";
 }
 
 function startGame() {
   document.querySelector('.endgame').style.display = "none";
   document.querySelector('.endgame .text').innerText ="";
-  document.querySelector('.selectSym').style.display = "block";
+  document.querySelector('.selectSimbol').style.display = "block";
   for (let i = 0; i < cells.length; i++) {
     cells[i].innerText = '';
     cells[i].style.removeProperty('background-color');
@@ -39,17 +39,19 @@ function startGame() {
 }
 
 function turnClick(square) {
-  if (typeof origBoard[square.target.id] ==='number') {
-    turn(square.target.id, huPlayer);
-    if (!checkWin(origBoard, huPlayer) && !checkTie())  
-      turn(bestSpot(), aiPlayer);
+  if (typeof papanPermainan[square.target.id] ==='number') {
+    turn(square.target.id, pManusia);
+    if (!checkWin(papanPermainan, pManusia) && !checkTie())  
+    setTimeout(function () {
+      turn(bestSpot(), pBot);
+    }, 1000);
   }
 }
 
 function turn(squareId, player) {
-  origBoard[squareId] = player;
+  papanPermainan[squareId] = player;
   document.getElementById(squareId).innerHTML = player;
-  let gameWon = checkWin(origBoard, player);
+  let gameWon = checkWin(papanPermainan, player);
   if (gameWon) gameOver(gameWon);
   checkTie();
 }
@@ -57,7 +59,7 @@ function turn(squareId, player) {
 function checkWin(board, player) {
   let plays = board.reduce((a, e, i) => (e === player) ? a.concat(i) : a, []);
   let gameWon = null;
-  for (let [index, win] of winCombos.entries()) {
+  for (let [index, win] of comboMenang.entries()) {
     if (win.every(elem => plays.indexOf(elem) > -1)) {
       gameWon = {index: index, player: player};
       break;
@@ -67,14 +69,14 @@ function checkWin(board, player) {
 }
 
 function gameOver(gameWon){
-  for (let index of winCombos[gameWon.index]) {
+  for (let index of comboMenang[gameWon.index]) {
     document.getElementById(index).style.backgroundColor = 
-      gameWon.player === huPlayer ? "blue" : "red";
+      gameWon.player === pManusia ? "blue" : "red";
   }
   for (let i=0; i < cells.length; i++) {
     cells[i].removeEventListener('click', turnClick, false);
   }
-  declareWinner(gameWon.player === huPlayer ? "You win!" : "You lose");
+  declareWinner(gameWon.player === pManusia ? "Kamu Menang!" : "Kamu kalah");
 }
 
 function declareWinner(who) {
@@ -82,11 +84,11 @@ function declareWinner(who) {
   document.querySelector(".endgame .text").innerText = who;
 }
 function emptySquares() {
-  return origBoard.filter((elm, i) => i===elm);
+  return papanPermainan.filter((elm, i) => i===elm);
 }
   
 function bestSpot(){
-  return minimax(origBoard, aiPlayer).index;
+  return minimax(papanPermainan, pBot).index;
 }
   
 function checkTie() {
@@ -95,18 +97,18 @@ function checkTie() {
       cell.style.backgroundColor = "green";
       cell.removeEventListener('click',turnClick, false);
     }
-    declareWinner("Tie game");
+    declareWinner("Game seri!");
     return true;
   } 
   return false;
 }
 
-function minimax(newBoard, player) {
-  var availSpots = emptySquares(newBoard);
+function minimax(papanBaru, player) {
+  var availSpots = emptySquares(papanBaru);
   
-  if (checkWin(newBoard, huPlayer)) {
+  if (checkWin(papanBaru, pManusia)) {
     return {score: -10};
-  } else if (checkWin(newBoard, aiPlayer)) {
+  } else if (checkWin(papanBaru, pBot)) {
     return {score: 10};
   } else if (availSpots.length === 0) {
     return {score: 0};
@@ -115,22 +117,24 @@ function minimax(newBoard, player) {
   var moves = [];
   for (let i = 0; i < availSpots.length; i ++) {
     var move = {};
-    move.index = newBoard[availSpots[i]];
-    newBoard[availSpots[i]] = player;
+    move.index = papanBaru[availSpots[i]];
+    papanBaru[availSpots[i]] = player;
     
-    if (player === aiPlayer)
-      move.score = minimax(newBoard, huPlayer).score;
+    if (player === pBot)
+      move.score = minimax(papanBaru, pManusia).score;
     else
-       move.score =  minimax(newBoard, aiPlayer).score;
-    newBoard[availSpots[i]] = move.index;
-    if ((player === aiPlayer && move.score === 10) || (player === huPlayer && move.score === -10))
+       move.score =  minimax(papanBaru, pBot).score;
+
+    papanBaru[availSpots[i]] = move.index;
+    
+    if ((player === pBot && move.score === 10) || (player === pManusia && move.score === -10))
       return move;
     else 
       moves.push(move);
   }
   
   let bestMove, bestScore;
-  if (player === aiPlayer) {
+  if (player === pBot) {
     bestScore = -1000;
     for(let i = 0; i < moves.length; i++) {
       if (moves[i].score > bestScore) {
