@@ -37,10 +37,12 @@ function pilihSimbol(simbol){
 
   // Menyembunyikan tampilan pemilihan simbol setelah pemain memilih simbol
   document.querySelector('.pilihSimbol').style.display = "none";
+  document.getElementById('gameTable').style.display = "table";
 }
 
 // Fungsi untuk memulai permainan
 function startGame() {
+  document.getElementById('gameTable').style.display = "none";
   document.querySelector('.endgame').style.display = "none";
   document.querySelector('.endgame .text').innerText ="";
   document.querySelector('.pilihSimbol').style.display = "block";
