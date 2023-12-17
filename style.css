@@ -127,6 +127,9 @@ table tr td:last-child {
 }
 
 .replay-btn{
+  position: absolute;
+  bottom: 30%;
+
   margin: 0 auto;
   margin-top: 50px;
   padding: 20px 50px;

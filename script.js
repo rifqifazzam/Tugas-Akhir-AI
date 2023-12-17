@@ -60,12 +60,7 @@ function turnClick(square) {
     // Pemain manusia melakukan langkah
     turn(square.target.id, pManusia);
 
-    // Jika belum ada pemenang atau seri, bot melakukan langkahnya s
-    if (!cekMenang(papanPermainan, pManusia) && !cekSeri()) {
-      setTimeout(function () {
-        turn(bestSpot(), pBot);
-      }, 700); // Delay waktu sebanyak 1000 milidetik (1 detik), dapat disesuaikan
-    }
+
   }
 }
 
@@ -165,6 +160,9 @@ function minimax(papanBaru, player) {
     return {score: 0};
   }
   
+
+
+  // Pada setiap pemanggilan fungsi rekurisf, akan membuat sebuah array moves yang bakal menyimpan langkah-langkah yang mungkin, dimana setiap langkah memiliki index dan score
   // Inisialisasi array untuk menyimpan langkah-langkah yang mungkin
   var moves = [];
   
